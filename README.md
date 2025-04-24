@@ -14,6 +14,7 @@ The pipeline is designed to perform the following key steps:
 The Airflow DAG (airflow_job.py) is configured to wait for the arrival of the flight_booking.csv data file in a specified Google Cloud Storage (GCS) bucket path.
 ### 2. Spark Data Transformation: 
 Once the input file is detected, Airflow triggers a serverless Spark job on Dataproc. This job, defined in spark_transformation_job.py, reads the flight_booking.csv file from GCS. It then performs several transformations and aggregations, including:
+    
     Adding derived columns like is_weekend, lead_time_category, and booking_success_rate.
     Calculating aggregated insights related to flight routes (route_insights) and booking origins (booking_origin_insights).
 ### 3. Data Loading to BigQuery:    
