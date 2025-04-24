@@ -44,9 +44,9 @@ This project implements a data engineering pipeline to process flight booking da
 
 
 
-##Architecture
+## Architecture
 
-graph TB
+graph 
 
     subgraph "Data Sources"
         A[Flight Booking CSV] -->|Upload| 
@@ -80,6 +80,61 @@ graph TB
     B -->|Input Data| E
     P -->|Updates| C
     O -->|Updates| C
+
+
+The pipeline consists of the following components:
+
+Source Data: CSV files containing flight booking information
+Cloud Storage: Stores raw input data and PySpark job code
+Cloud Composer (Airflow): Orchestrates the pipeline workflow
+Dataproc Serverless: Executes PySpark transformation jobs
+BigQuery: Stores processed data for analysis
+GitHub Actions: Automates CI/CD deployment to DEV and PROD environments
+
+
+## Data Flow
+
+flowchart 
+
+    A[Flight Booking CSV] -->|Upload to| 
+    B[GCS Bucket]
+    B -->|Detected by| C[GCS File Sensor]
+    C -->|Triggers| D[Dataproc Serverless]
+    D -->|Executes| E[PySpark Job]
+    
+    subgraph "Data Transformations"
+        E -->|Process| F[Add derived columns]
+        F -->|Calculate| G[Aggregate metrics]
+    end
+    
+    G -->|Write| H[Transformed Data Table]
+    G -->|Write| I[Route Insights Table]
+    G -->|Write| J[Origin Insights Table]
+    
+    H -.->|Analysis| K[BI Dashboards]
+    I -.->|Analysis| K
+    J -.->|Analysis| K
+    
+    style H fill:#f9f,stroke:#333,stroke-width:2px
+    style I fill:#bbf,stroke:#333,stroke-width:2px
+    style J fill:#bfb,stroke:#333,stroke-width:2px
+    style K fill:#fbb,stroke:#333,stroke-width:2px
+
+
+The data flow is as follows:
+
+Flight booking CSV data is uploaded to Google Cloud Storage
+Airflow DAG detects the file and triggers the processing pipeline
+Dataproc Serverless executes a PySpark job to transform the data
+Transformed data is loaded into BigQuery tables:
+
+Transformed flight data
+Route insights
+Origin insights
+
+
+The data is available for analysis and reporting
+
 
 
 ## Setup and Prerequisites
