@@ -4,6 +4,18 @@
 
 This project implements a data engineering pipeline to process flight booking data. It utilizes Apache Airflow for orchestration, Apache Spark for data transformation, and includes a Continuous Integration/Continuous Deployment (CI/CD) pipeline using GitHub Actions.
 
+
+## Tech Stack
+
+![Apache Airflow](https://airflow.apache.org/docs/apache-airflow/stable/_static/logos/wordmark_neutral.png)
+![Apache Spark](https://spark.apache.org/images/spark-logo-trademark.png)
+![GitHub Actions](https://github.githubassets.com/images/modules/logos_page/GitHub-Actions.png)
+![Python](https://www.python.org/static/community_logos/python-logo-master-v3-TM.png)
+
+
+
+
+
 ## Features
 
 * Automated data ingestion/processing using Airflow.
