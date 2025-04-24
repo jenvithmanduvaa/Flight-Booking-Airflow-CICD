@@ -16,13 +16,6 @@ This project implements a data engineering pipeline to process flight booking da
 
 
 
-![Apache Airflow](https://upload.wikimedia.org/wikipedia/commons/d/de/AirflowLogo.png)
-
-![Apache Spark](https://spark.apache.org/images/spark-logo-trademark.png)
-
-![GitHub Actions](![image](https://github.com/user-attachments/assets/087491ff-370e-4b47-8f6f-a587094ecde8))
-
-![Python](https://www.python.org/static/community_logos/python-logo-master-v3-TM.png)
 
 
 
