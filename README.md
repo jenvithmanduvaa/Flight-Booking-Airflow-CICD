@@ -20,7 +20,7 @@ This project implements a data engineering pipeline to process flight booking da
 
 ![Apache Spark](https://spark.apache.org/images/spark-logo-trademark.png)
 
-![GitHub Actions](https://cj-hewett.medium.com/building-docker-images-in-github-actions-to-be-used-by-other-workflows-7bb75c35ecb0)
+![GitHub Actions](![image](https://github.com/user-attachments/assets/087491ff-370e-4b47-8f6f-a587094ecde8))
 
 ![Python](https://www.python.org/static/community_logos/python-logo-master-v3-TM.png)
 
