@@ -1,95 +1,228 @@
-# Flight Booking Data Processing Pipeline
+# Flight Booking Data Engineering Pipeline with Airflow and CICD
 
-## Overview
 
-This project implements an automated data pipeline for processing and analyzing flight booking data. The pipeline ingests raw CSV data, performs transformations using Apache Spark, and loads the results into BigQuery tables for analysis and reporting.
 
-## Architecture
+## Project Description
 
-![Architecture Diagram](https://mermaid.ink/img/pako:eNp1ksFugzAMhl_F8gnUsW5FGhyQetqh0k7bZYceTMGKQqIEqk6r-u5LgDJNmnwK_v3b-W0n0GqJUIJ2te_tQbc8B9_oqvXWw4YMuZo0e90NvZSa48c1ZpGWHD_eL89CbHmMnrqOJDhldW2NdJ1O9nEYWz2SXhQ_gy47EG5JsYDvxqNrZ0kDsZC-HVzgPnlyyj_q_eoUtEQdgHfQIY_SGHtXYZSqz-fLmJ9YC9y__36-XK93hfhaKqVr3RO4Rau-7N_VwvfOI1TBjnYY9GKdvVdTSUd-RTYB8uSdbCZLFXLe_7mZnobRkvagw2Zsk8xLUCON_s8kS6gTiuyuuA0ZkzTJUJU8ozLdp9k2SShLV1MszJZuMaUs326fKI2oRxQwp9uIpQ8FpiRJSJ5nJGPZLs1TzDn_Wz9U2vUw)
 
-The pipeline consists of the following components:
 
-1. **Source Data**: CSV files containing flight booking information
-2. **Cloud Storage**: Stores raw input data and PySpark job code
-3. **Cloud Composer (Airflow)**: Orchestrates the pipeline workflow
-4. **Dataproc Serverless**: Executes PySpark transformation jobs
-5. **BigQuery**: Stores processed data for analysis
-6. **GitHub Actions**: Automates CI/CD deployment to DEV and PROD environments
+This project implements a data engineering pipeline to process flight booking data. It utilizes Apache Airflow for orchestration, Apache Spark for data transformation, and includes a Continuous Integration/Continuous Deployment (CI/CD) pipeline using GitHub Actions.
 
-## Data Flow
 
-![Data Flow Diagram](https://mermaid.ink/img/pako:eNqNkk1rwzAMhv-K0GmF7ZJjYKUXh8EOZYcdeihasrR4iePZVksp-e-zk5VR1m1shyC9evRIQhdkSIQEXXGr7UHTgkFbTbX1aNFh5oMmqNXZCxXiZoXDXqmM03ZkrVHWKYcDbS3mKBU3qnDeVTkD3Z9PtRb9o33vr2N0Zyqk8_nEZ5hKjVbxg6OkqIQ3a14J_jBQCDfvPx8vq9Um56uiiLr7MpfRJN-Ye1uCM-jM92O5ePTOIpRWjcozP1lnH-1QsogXpAKgF-9kM7RUfkU2HbB5jjfDgRo5ff2Z3jSHEXZjHbSh6aukARUPdnwl8ZxaoMh6yX2IOCdRgqpgCZZxP05WUYJJ_LCNYp5M8AxTki5f-RClEXaIAuY0j1iyVXCGJInJNI1JyuJVMmXMGftrPwG1u44_)
 
-The data flow is as follows:
 
-1. Flight booking CSV data is uploaded to Google Cloud Storage
-2. Airflow DAG detects the file and triggers the processing pipeline
-3. Dataproc Serverless executes a PySpark job to transform the data
-4. Transformed data is loaded into BigQuery tables:
-   - Transformed flight data
-   - Route insights
-   - Origin insights
-5. The data is available for analysis and reporting
+
+## Tech Stack
+
+
+
+![Apache Airflow](https://airflow.apache.org/docs/apache-airflow/stable/_static/logos/wordmark_neutral.png)
+
+![Apache Spark](https://spark.apache.org/images/spark-logo-trademark.png)
+
+![GitHub Actions](https://github.githubassets.com/images/modules/logos_page/GitHub-Actions.png)
+
+![Python](https://www.python.org/static/community_logos/python-logo-master-v3-TM.png)
+
+
+
+
+
+
+
+
+
+
+
+## Features
+
+
+
+* Automated data ingestion/processing using Airflow.
+
+* Scalable data transformation with Apache Spark.
+
+* Environment-specific configurations (`dev` and `prod`).
+
+* Automated testing and deployment via GitHub Actions (CI/CD).
+
+* Includes sample `flight_booking.csv` data.
+
+
 
 ## Project Structure
 
 
-## CI/CD Pipeline
 
-The project uses GitHub Actions for continuous integration and deployment:
 
-- Pushing to the `dev` branch deploys to the DEV environment
-- Pushing to the `main` branch deploys to the PROD environment
 
-The deployment process includes:
-1. Checking out the code
-2. Authenticating to Google Cloud
-3. Uploading environment variables to Cloud Storage
-4. Importing variables into Airflow
-5. Uploading the Spark job to Cloud Storage
-6. Deploying the Airflow DAG to Cloud Composer
 
-## Environment Configuration
 
-### DEV Environment
-- Dataset: `flight_data_dev`
-- Tables:
-  - `transformed_flight_data_dev`
-  - `route_insights_dev`
-  - `origin_insights_dev`
+## Setup and Prerequisites
 
-### PROD Environment
-- Dataset: `flight_data_prod`
-- Tables:
-  - `transformed_flight_data_prod`
-  - `route_insights_prod`
-  - `origin_insights_prod`
 
-## Data Transformations
 
-The PySpark job performs the following transformations on the flight booking data:
+Before you begin, ensure you have the following installed and configured:
 
-1. **Added Columns**:
-   - `is_weekend`: Flag indicating if the flight is on a weekend (Sat/Sun)
-   - `lead_time_category`: Categorizes bookings as "Last-Minute", "Short-Term", or "Long-Term"
-   - `booking_success_rate`: Calculated as `booking_complete / num_passengers`
 
-2. **Aggregated Insights**:
-   - **Route Insights**: Aggregations by route, including total bookings, average flight duration, and average stay length
-   - **Booking Origin Insights**: Aggregations by booking origin, including total bookings, success rate, and average purchase lead time
 
-## Deployment Instructions
+1.  **Git:** For cloning the repository.
 
-### Prerequisites
-- Google Cloud account with necessary permissions
-- BigQuery datasets created
-- Cloud Composer (Airflow) environments set up
-- GitHub repository with secrets configured:
-  - `GCP_SA_KEY`: Service account key with necessary permissions
-  - `GCP_PROJECT_ID`: Google Cloud project ID
+2.  **Python 3.7+:** Ensure Python is installed.
 
-### Manual Deployment
-If you need to deploy manually:
+3.  **Apache Airflow:** A running Airflow environment (local, Docker, or managed service). You'll need to place or configure Airflow to recognize the DAG file (`airflow_job/airflow_job.py`).
 
-1. Upload variables.json to the appropriate Composer bucket:
+4.  **Apache Spark:** A Spark environment (local, cluster, or cloud-based) to execute the Spark job.
+
+5.  **Java:** Spark requires Java to be installed.
+
+6.  **GitHub Account:** To host the repository and use GitHub Actions.
+
+7.  **GitHub Personal Access Token (PAT):** Configured for pushing code and potentially for CI/CD if needed for deployment steps (already addressed during pushing).
+
+
+
+## Local Setup
+
+
+
+1.  **Clone the repository:**
+
+    ```bash
+
+    git clone [https://github.com/jenvithmanduvaa/Flight-Booking-Airflow-CICD.git](https://github.com/jenvithmanduvaa/Flight-Booking-Airflow-CICD.git)
+
+    cd Flight-Booking-Airflow-CICD
+
+    ```
+
+
+
+2.  **Switch to the `dev` branch:**
+
+    ```bash
+
+    git checkout dev
+
+    ```
+
+
+
+3.  **Place project files:** Ensure all necessary project files (like the ones you copied previously) are in this directory. If you followed the previous steps, they should already be here.
+
+
+
+4.  **Install Python Dependencies:**
+
+    Navigate to the directory containing your `requirements.txt` (if you have one; if not, you'll need to create one listing dependencies like `apache-airflow`, `pyspark`, etc.).
+
+    ```bash
+
+    # Example: If you have a requirements.txt in the root
+
+    pip install -r requirements.txt
+
+    # Or install individually
+
+    # pip install apache-airflow pyspark ...
+
+    ```
+
+
+
+5.  **Configure Airflow:**
+
+    Copy the `airflow_job.py` file into your Airflow DAGs folder so Airflow can discover it.
+
+    ```bash
+
+    # Example: Assuming your DAGs folder is ~/airflow/dags
+
+    cp airflow_job/airflow_job.py ~/airflow/dags/
+
+    ```
+
+    Configure any necessary Airflow Connections or Variables as required by `airflow_job.py`.
+
+
+
+6.  **Configure Environment Variables/Variables Files:**
+
+    Review the `variables/dev/variables.json` and `variables/prod/variables.json` files. Ensure your Airflow/Spark setup can access the correct environment variables or load configurations from these files as intended by your code.
+
+
+
+## Running the Pipeline
+
+
+
+1.  **Start Airflow:** Ensure your Airflow scheduler and webserver are running.
+
+2.  **Unpause the DAG:** In the Airflow UI, find the `airflow_job` DAG (or whatever name is defined in the Python file) and unpause it.
+
+3.  **Trigger the DAG:** You can manually trigger the DAG from the Airflow UI or wait for its scheduled run.
+
+4.  **Monitor:** Monitor the DAG run in the Airflow UI to check its progress and view logs if steps fail.
+
+
+
+## CI/CD with GitHub Actions
+
+
+
+The `.github/workflows/ci-cd.yaml` file defines the automated workflow that runs on GitHub Actions. Typically, this workflow will:
+
+
+
+* Checkout the code.
+
+* Set up Python.
+
+* Install dependencies.
+
+* Perform code quality checks (linting, formatting).
+
+* Run tests (if you have them).
+
+* (Potentially) Check DAG syntax.
+
+* (Potentially) Build and push Docker images.
+
+* (Potentially) Deploy to your target environment.
+
+
+
+Check the `ci-cd.yaml` file for the specific steps implemented in your CI/CD pipeline. Monitor the "Actions" tab on your GitHub repository for the status of workflow runs triggered by your commits.
+
+
+
+## Configuration
+
+
+
+Configuration settings are managed in the `variables/` directory, separated by environment (`dev`, `prod`). Your Airflow and Spark jobs should be written to load configurations from the appropriate `variables.json` file based on the execution environment.
+
+
+
+## Contributing
+
+
+
+(Standard section - describe how others can contribute, e.g., fork the repo, create a branch, make changes, submit a pull request)
+
+
+
+## License
+
+
+
+(Standard section - specify the license under which your project is released, e.g., MIT, Apache 2.0, etc.)
+
+
+
+---
+
+
+
+This README provides a comprehensive overview. Remember to fill in any specifics required by your `airflow_job.py` or `spark_transformation_job.py` files, such as required environment variables, Airflow Connections/Variables, or specific Spark submission commands if applicable.
+
