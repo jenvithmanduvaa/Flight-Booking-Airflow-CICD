@@ -45,20 +45,38 @@ This project implements a data engineering pipeline to process flight booking da
 
 
 
-## Project Structure
-
-flight-booking-pipeline/
-├── airflow_job/
-│   └── airflow_job.py         # Airflow DAG definition
-├── spark_job/
-│   └── spark_transformation_job.py  # PySpark transformation code
-├── variables/
-│   ├── dev/
-│   │   └── variables.json     # DEV environment variables
-│   └── prod/
-│       └── variables.json     # PROD environment variables
-└── .github/workflows/
-    └── ci-cd.yaml             # GitHub Actions CI/CD workflow
+graph TB
+    subgraph "Data Sources"
+        A[Flight Booking CSV] -->|Upload| B[Cloud Storage]
+    end
+    
+    subgraph "Orchestration"
+        C[Cloud Composer/Airflow] -->|Orchestrates Pipeline| D[DAG Execution]
+        D -->|Detects File| E[GCS File Sensor]
+        E -->|Triggers| F[Dataproc Job]
+    end
+    
+    subgraph "Processing"
+        F -->|Executes| G[Spark Transformation Job]
+        G -->|Transforms Data| H[Data Processing]
+    end
+    
+    subgraph "Storage & Analytics"
+        H -->|Writes to| I[BigQuery Tables]
+        I -->|Stores| J[Transformed Data]
+        I -->|Stores| K[Route Insights]
+        I -->|Stores| L[Origin Insights]
+    end
+    
+    subgraph "CI/CD Pipeline"
+        M[GitHub Repository] -->|Push to Branch| N[GitHub Actions]
+        N -->|Dev Branch| O[Deploy to DEV]
+        N -->|Main Branch| P[Deploy to PROD]
+    end
+    
+    B -->|Input Data| E
+    P -->|Updates| C
+    O -->|Updates| C
 
 
 
