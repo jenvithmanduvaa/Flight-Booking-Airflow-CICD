@@ -10,13 +10,19 @@ This project implements an end-to-end data engineering pipeline for processing f
 
 The pipeline is designed to perform the following key steps:
 
-Data Ingestion Trigger: The Airflow DAG (airflow_job.py) is configured to wait for the arrival of the flight_booking.csv data file in a specified Google Cloud Storage (GCS) bucket path.
-Spark Data Transformation: Once the input file is detected, Airflow triggers a serverless Spark job on Dataproc. This job, defined in spark_transformation_job.py, reads the flight_booking.csv file from GCS. It then performs several transformations and aggregations, including:
-Adding derived columns like is_weekend, lead_time_category, and booking_success_rate.
-Calculating aggregated insights related to flight routes (route_insights) and booking origins (booking_origin_insights).
-Data Loading to BigQuery: After transformations, the Spark job writes the processed data and the generated insights into separate tables within Google BigQuery.
-Configuration Management: The pipeline uses environment-specific configuration defined in variables/dev/variables.json and variables/prod/variables.json files. These variables, such as GCS bucket names, BigQuery project ID, dataset name, and table names, are managed as Airflow Variables and passed as command-line arguments to the Spark job. This allows the same pipeline code to be deployed and run in different environments with distinct settings.
-CI/CD Automation: A GitHub Actions workflow defined in .github/workflows/ci-cd.yaml automates the deployment process. On pushes to the dev branch, it authenticates to GCP and uploads/imports the necessary files (Airflow variables, Spark job script, Airflow DAG) to the development Airflow Composer environment and GCS. Similarly, on pushes to the main branch, it deploys the code and configuration to the production Airflow Composer environment and GCS. This ensures that code changes are automatically tested and deployed to the respective environments.
+### 1. Data Ingestion Trigger: 
+The Airflow DAG (airflow_job.py) is configured to wait for the arrival of the flight_booking.csv data file in a specified Google Cloud Storage (GCS) bucket path.
+### 2. Spark Data Transformation: 
+Once the input file is detected, Airflow triggers a serverless Spark job on Dataproc. This job, defined in spark_transformation_job.py, reads the flight_booking.csv file from GCS. It then performs several transformations and aggregations, including:
+    Adding derived columns like is_weekend, lead_time_category, and booking_success_rate.
+    Calculating aggregated insights related to flight routes (route_insights) and booking origins (booking_origin_insights).
+### 3. Data Loading to BigQuery:    
+After transformations, the Spark job writes the processed data and the generated insights into separate tables within Google BigQuery.
+### 4. Configuration Management: 
+The pipeline uses environment-specific configuration defined in variables/dev/variables.json and variables/prod/variables.json files. These variables, such as GCS bucket names, BigQuery project ID, dataset name, and table names, are managed as Airflow Variables and passed as command-line arguments to the Spark job. This allows the same pipeline code to be deployed and run in different environments with distinct settings.
+### 5. CI/CD Automation: 
+A GitHub Actions workflow defined in .github/workflows/ci-cd.yaml automates the deployment process. On pushes to the dev branch, it authenticates to GCP and uploads/imports the necessary files (Airflow variables, Spark job script, Airflow DAG) to the development Airflow Composer environment and GCS. Similarly, on pushes to the main branch, it deploys the code and configuration to the production Airflow Composer environment and GCS. This ensures that code changes are automatically tested and deployed to the respective environments.
+
 In essence, this project provides a robust, automated, and environment-aware pipeline for processing flight booking data from GCS, transforming it with Spark, loading it into BigQuery for analysis, and managing the deployment process via CI/CD.
 
 
