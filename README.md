@@ -8,6 +8,19 @@
 
 This project implements an end-to-end data engineering pipeline for processing flight booking data, orchestrated by Apache Airflow and executed using Apache Spark on Google Cloud Platform (GCP), with automation managed by GitHub Actions for Continuous Integration and Continuous Deployment (CI/CD).
 
+
+## Tech Stack
+
+
+
+
+
+
+
+<img src="https://upload.wikimedia.org/wikipedia/commons/d/de/AirflowLogo.png" alt="Apache Airflow" width="150"/> <img src="https://spark.apache.org/images/spark-logo-trademark.png" alt="Apache Spark" width="150"/> <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Actions.png" alt="GitHub Actions" width="150"/> <img src="https://www.python.org/static/community_logos/python-logo-master-v3-TM.png" alt="Python" width="150"/> 
+
+
+
 The pipeline is designed to perform the following key steps:
 
 ### 1. Data Ingestion Trigger: 
@@ -50,15 +63,6 @@ In essence, this project provides a robust, automated, and environment-aware pip
 
 
 
-## Tech Stack
-
-
-
-
-
-
-
-<img src="https://upload.wikimedia.org/wikipedia/commons/d/de/AirflowLogo.png" alt="Apache Airflow" width="150"/> <img src="https://spark.apache.org/images/spark-logo-trademark.png" alt="Apache Spark" width="150"/> <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Actions.png" alt="GitHub Actions" width="150"/> <img src="https://www.python.org/static/community_logos/python-logo-master-v3-TM.png" alt="Python" width="150"/> 
 
 
 
