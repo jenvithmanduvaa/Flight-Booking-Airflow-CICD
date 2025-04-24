@@ -47,22 +47,18 @@ This project implements a data engineering pipeline to process flight booking da
 
 ## Project Structure
 
-
-├── .github/workflows/  # CI/CD workflow files
-│   └── ci-cd.yaml
+flight-booking-pipeline/
 ├── airflow_job/
-│   └── airflow_job.py  # Airflow DAG definition or related code
+│   └── airflow_job.py         # Airflow DAG definition
 ├── spark_job/
-│   └── spark_transformation_job.py # Spark transformation script
-├── variables/          # Environment-specific configuration variables
+│   └── spark_transformation_job.py  # PySpark transformation code
+├── variables/
 │   ├── dev/
-│   │   └── variables.json
+│   │   └── variables.json     # DEV environment variables
 │   └── prod/
-│       └── variables.json
-├── flight_booking.csv  # Sample input data file
-└── README.md           # Project README
-
-
+│       └── variables.json     # PROD environment variables
+└── .github/workflows/
+    └── ci-cd.yaml             # GitHub Actions CI/CD workflow
 
 
 
