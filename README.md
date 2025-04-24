@@ -44,10 +44,13 @@ This project implements a data engineering pipeline to process flight booking da
 
 
 
+##Architecture
 
 graph TB
+
     subgraph "Data Sources"
-        A[Flight Booking CSV] -->|Upload| B[Cloud Storage]
+        A[Flight Booking CSV] -->|Upload| 
+        B[Cloud Storage]
     end
     
     subgraph "Orchestration"
@@ -77,7 +80,6 @@ graph TB
     B -->|Input Data| E
     P -->|Updates| C
     O -->|Updates| C
-
 
 
 ## Setup and Prerequisites
