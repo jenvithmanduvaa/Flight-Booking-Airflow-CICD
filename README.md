@@ -33,3 +33,63 @@ The data flow is as follows:
 5. The data is available for analysis and reporting
 
 ## Project Structure
+
+
+## CI/CD Pipeline
+
+The project uses GitHub Actions for continuous integration and deployment:
+
+- Pushing to the `dev` branch deploys to the DEV environment
+- Pushing to the `main` branch deploys to the PROD environment
+
+The deployment process includes:
+1. Checking out the code
+2. Authenticating to Google Cloud
+3. Uploading environment variables to Cloud Storage
+4. Importing variables into Airflow
+5. Uploading the Spark job to Cloud Storage
+6. Deploying the Airflow DAG to Cloud Composer
+
+## Environment Configuration
+
+### DEV Environment
+- Dataset: `flight_data_dev`
+- Tables:
+  - `transformed_flight_data_dev`
+  - `route_insights_dev`
+  - `origin_insights_dev`
+
+### PROD Environment
+- Dataset: `flight_data_prod`
+- Tables:
+  - `transformed_flight_data_prod`
+  - `route_insights_prod`
+  - `origin_insights_prod`
+
+## Data Transformations
+
+The PySpark job performs the following transformations on the flight booking data:
+
+1. **Added Columns**:
+   - `is_weekend`: Flag indicating if the flight is on a weekend (Sat/Sun)
+   - `lead_time_category`: Categorizes bookings as "Last-Minute", "Short-Term", or "Long-Term"
+   - `booking_success_rate`: Calculated as `booking_complete / num_passengers`
+
+2. **Aggregated Insights**:
+   - **Route Insights**: Aggregations by route, including total bookings, average flight duration, and average stay length
+   - **Booking Origin Insights**: Aggregations by booking origin, including total bookings, success rate, and average purchase lead time
+
+## Deployment Instructions
+
+### Prerequisites
+- Google Cloud account with necessary permissions
+- BigQuery datasets created
+- Cloud Composer (Airflow) environments set up
+- GitHub repository with secrets configured:
+  - `GCP_SA_KEY`: Service account key with necessary permissions
+  - `GCP_PROJECT_ID`: Google Cloud project ID
+
+### Manual Deployment
+If you need to deploy manually:
+
+1. Upload variables.json to the appropriate Composer bucket:
