@@ -1,245 +1,174 @@
-# Flight Booking Data Engineering Pipeline with Airflow and CICD
+# 👋 Hi, I'm Jenvith M
 
+### Machine Learning Engineer | MLOps Specialist | AI Solutions Architect
 
-
-## Project Description
-
-
-
-This project implements an end-to-end data engineering pipeline for processing flight booking data, orchestrated by Apache Airflow and executed using Apache Spark on Google Cloud Platform (GCP), with automation managed by GitHub Actions for Continuous Integration and Continuous Deployment (CI/CD).
-
-
-## Tech Stack
-
-
-
-
-
-
-
-<img src="https://upload.wikimedia.org/wikipedia/commons/d/de/AirflowLogo.png" alt="Apache Airflow" width="150"/> <img src="https://spark.apache.org/images/spark-logo-trademark.png" alt="Apache Spark" width="150"/> <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Actions.png" alt="GitHub Actions" width="150"/> <img src="https://www.python.org/static/community_logos/python-logo-master-v3-TM.png" alt="Python" width="150"/> 
-
-
-
-The pipeline is designed to perform the following key steps:
-
-### 1. Data Ingestion Trigger: 
-The Airflow DAG (airflow_job.py) is configured to wait for the arrival of the flight_booking.csv data file in a specified Google Cloud Storage (GCS) bucket path.
-### 2. Spark Data Transformation: 
-Once the input file is detected, Airflow triggers a serverless Spark job on Dataproc. This job, defined in spark_transformation_job.py, reads the flight_booking.csv file from GCS. It then performs several transformations and aggregations, including:
-    
-    Adding derived columns like is_weekend, lead_time_category, and booking_success_rate.
-    Calculating aggregated insights related to flight routes (route_insights) and booking origins (booking_origin_insights).
-### 3. Data Loading to BigQuery:    
-After transformations, the Spark job writes the processed data and the generated insights into separate tables within Google BigQuery.
-### 4. Configuration Management: 
-The pipeline uses environment-specific configuration defined in variables/dev/variables.json and variables/prod/variables.json files. These variables, such as GCS bucket names, BigQuery project ID, dataset name, and table names, are managed as Airflow Variables and passed as command-line arguments to the Spark job. This allows the same pipeline code to be deployed and run in different environments with distinct settings.
-### 5. CI/CD Automation: 
-A GitHub Actions workflow defined in .github/workflows/ci-cd.yaml automates the deployment process. On pushes to the dev branch, it authenticates to GCP and uploads/imports the necessary files (Airflow variables, Spark job script, Airflow DAG) to the development Airflow Composer environment and GCS. Similarly, on pushes to the main branch, it deploys the code and configuration to the production Airflow Composer environment and GCS. This ensures that code changes are automatically tested and deployed to the respective environments.
-
-In essence, this project provides a robust, automated, and environment-aware pipeline for processing flight booking data from GCS, transforming it with Spark, loading it into BigQuery for analysis, and managing the deployment process via CI/CD.
-
-
-
-
-
-
-
-
-
-## Features
-
-
-
-* Automated data ingestion/processing using Airflow.
-
-* Scalable data transformation with Apache Spark.
-
-* Environment-specific configurations (`dev` and `prod`).
-
-* Automated testing and deployment via GitHub Actions (CI/CD).
-
-* Includes sample `flight_booking.csv` data.
-
-
-
-
-
-
-## Architecture
-
-graph 
-
-    subgraph "Data Sources"
-        A[Flight Booking CSV] -->|Upload| 
-        B[Cloud Storage]
-    end
-    
-    subgraph "Orchestration"
-        C[Cloud Composer/Airflow] -->|Orchestrates Pipeline| D[DAG Execution]
-        D -->|Detects File| E[GCS File Sensor]
-        E -->|Triggers| F[Dataproc Job]
-    end
-    
-    subgraph "Processing"
-        F -->|Executes| G[Spark Transformation Job]
-        G -->|Transforms Data| H[Data Processing]
-    end
-    
-    subgraph "Storage & Analytics"
-        H -->|Writes to| I[BigQuery Tables]
-        I -->|Stores| J[Transformed Data]
-        I -->|Stores| K[Route Insights]
-        I -->|Stores| L[Origin Insights]
-    end
-    
-    subgraph "CI/CD Pipeline"
-        M[GitHub Repository] -->|Push to Branch| N[GitHub Actions]
-        N -->|Dev Branch| O[Deploy to DEV]
-        N -->|Main Branch| P[Deploy to PROD]
-    end
-    
-    B -->|Input Data| E
-    P -->|Updates| C
-    O -->|Updates| C
-
-
-The pipeline consists of the following components:
-
-Source Data: CSV files containing flight booking information
-Cloud Storage: Stores raw input data and PySpark job code
-Cloud Composer (Airflow): Orchestrates the pipeline workflow
-Dataproc Serverless: Executes PySpark transformation jobs
-BigQuery: Stores processed data for analysis
-GitHub Actions: Automates CI/CD deployment to DEV and PROD environments
-
-
-## Data Flow
-
-flowchart 
-
-    A[Flight Booking CSV] -->|Upload to| 
-    B[GCS Bucket]
-    B -->|Detected by| C[GCS File Sensor]
-    C -->|Triggers| D[Dataproc Serverless]
-    D -->|Executes| E[PySpark Job]
-    
-    subgraph "Data Transformations"
-        E -->|Process| F[Add derived columns]
-        F -->|Calculate| G[Aggregate metrics]
-    end
-    
-    G -->|Write| H[Transformed Data Table]
-    G -->|Write| I[Route Insights Table]
-    G -->|Write| J[Origin Insights Table]
-    
-    H -.->|Analysis| K[BI Dashboards]
-    I -.->|Analysis| K
-    J -.->|Analysis| K
-    
-    style H fill:#f9f,stroke:#333,stroke-width:2px
-    style I fill:#bbf,stroke:#333,stroke-width:2px
-    style J fill:#bfb,stroke:#333,stroke-width:2px
-    style K fill:#fbb,stroke:#333,stroke-width:2px
-
-
-The data flow is as follows:
-
-Flight booking CSV data is uploaded to Google Cloud Storage
-Airflow DAG detects the file and triggers the processing pipeline
-Dataproc Serverless executes a PySpark job to transform the data
-Transformed data is loaded into BigQuery tables:
-
-Transformed flight data
-Route insights
-Origin insights
-
-
-The data is available for analysis and reporting
-
-
-
-## Setup and Prerequisites
-
-Before you begin, ensure you have the following installed and configured:
-
-1.  **Git:** For cloning the repository.
-2.  **Python 3.7+:** Ensure Python is installed.
-3.  **Apache Airflow:** A running Airflow environment (local, Docker, or managed service). You'll need to place or configure Airflow to recognize the DAG file (`airflow_job/airflow_job.py`).
-4.  **Apache Spark:** A Spark environment (local, cluster, or cloud-based) to execute the Spark job.
-5.  **Java:** Spark requires Java to be installed.
-6.  **GitHub Account:** To host the repository and use GitHub Actions.
-7.  **GitHub Personal Access Token (PAT):** Configured for pushing code and potentially for CI/CD if needed for deployment steps (already addressed during pushing).
-
-## Local Setup
-
-1.  **Clone the repository:**
-    ```bash
-    git clone [https://github.com/jenvithmanduvaa/Flight-Booking-Airflow-CICD.git](https://github.com/jenvithmanduvaa/Flight-Booking-Airflow-CICD.git)
-    cd Flight-Booking-Airflow-CICD
-    ```
-
-2.  **Switch to the `dev` branch:**
-    ```bash
-    git checkout dev
-    ```
-
-3.  **Place project files:** Ensure all necessary project files (like the ones you copied previously) are in this directory. If you followed the previous steps, they should already be here.
-
-4.  **Install Python Dependencies:**
-    Navigate to the directory containing your `requirements.txt` (if you have one; if not, you'll need to create one listing dependencies like `apache-airflow`, `pyspark`, etc.).
-    ```bash
-    # Example: If you have a requirements.txt in the root
-    pip install -r requirements.txt
-    # Or install individually
-    # pip install apache-airflow pyspark ...
-    ```
-
-5.  **Configure Airflow:**
-    Copy the `airflow_job.py` file into your Airflow DAGs folder so Airflow can discover it.
-    ```bash
-    # Example: Assuming your DAGs folder is ~/airflow/dags
-    cp airflow_job/airflow_job.py ~/airflow/dags/
-    ```
-    Configure any necessary Airflow Connections or Variables as required by `airflow_job.py`.
-
-6.  **Configure Environment Variables/Variables Files:**
-    Review the `variables/dev/variables.json` and `variables/prod/variables.json` files. Ensure your Airflow/Spark setup can access the correct environment variables or load configurations from these files as intended by your code.
-
-## Running the Pipeline
-
-1.  **Start Airflow:** Ensure your Airflow scheduler and webserver are running.
-2.  **Unpause the DAG:** In the Airflow UI, find the `airflow_job` DAG (or whatever name is defined in the Python file) and unpause it.
-3.  **Trigger the DAG:** You can manually trigger the DAG from the Airflow UI or wait for its scheduled run.
-4.  **Monitor:** Monitor the DAG run in the Airflow UI to check its progress and view logs if steps fail.
-
-## CI/CD with GitHub Actions
-
-The `.github/workflows/ci-cd.yaml` file defines the automated workflow that runs on GitHub Actions. Typically, this workflow will:
-
-* Checkout the code.
-* Set up Python.
-* Install dependencies.
-* Perform code quality checks (linting, formatting).
-* Run tests (if you have them).
-* (Potentially) Check DAG syntax.
-* (Potentially) Build and push Docker images.
-* (Potentially) Deploy to your target environment.
-
-Check the `ci-cd.yaml` file for the specific steps implemented in your CI/CD pipeline. Monitor the "Actions" tab on your GitHub repository for the status of workflow runs triggered by your commits.
-
-## Configuration
-
-Configuration settings are managed in the `variables/` directory, separated by environment (`dev`, `prod`). Your Airflow and Spark jobs should be written to load configurations from the appropriate `variables.json` file based on the execution environment.
-
-## Contributing
-
-(Standard section - describe how others can contribute, e.g., fork the repo, create a branch, make changes, submit a pull request)
-
-## License
-
-(Standard section - specify the license under which your project is released, e.g., MIT, Apache 2.0, etc.)
+Welcome to my GitHub portfolio! I'm a Machine Learning Engineer with 3+ years of experience designing and deploying production-grade ML and LLM systems. I specialize in building scalable RAG-based multi-agentic AI frameworks and high-throughput inference pipelines on cloud-native platforms.
 
 ---
 
-This README provides a comprehensive overview. Remember to fill in any specifics required by your `airflow_job.py` or `spark_transformation_job.py` files, such as required environment variables, Airflow Connections/Variables, or specific Spark submission commands if applicable.
+## 🚀 About Me
+
+- 🔭 Currently building multi-agent AI systems and optimizing LLM inference at **Piper Sandler**
+- 🌱 Passionate about MLOps/LLMOps, scalable AI infrastructure, and responsible AI practices
+- 💡 Expert in deploying production ML models with 99.99% uptime and cost-efficient architectures
+- 🎓 MS in Data Science from Northeastern University, Boston
+- 📫 How to reach me: [jenvithm10@gmail.com](mailto:jenvithm10@gmail.com)
+- 🔗 LinkedIn: [linkedin.com/in/jenvithm](https://www.linkedin.com/in/jenvithm/)
+- 📍 Based in Boston, MA
+
+---
+
+## 🛠️ Tech Stack
+
+### Programming & Scripting
+![Python](https://img.shields.io/badge/-Python-3776AB?style=flat-square&logo=python&logoColor=white)
+![SQL](https://img.shields.io/badge/-SQL-4479A1?style=flat-square&logo=postgresql&logoColor=white)
+![Java](https://img.shields.io/badge/-Java-007396?style=flat-square&logo=java&logoColor=white)
+![Scala](https://img.shields.io/badge/-Scala-DC322F?style=flat-square&logo=scala&logoColor=white)
+![R](https://img.shields.io/badge/-R-276DC3?style=flat-square&logo=r&logoColor=white)
+![Bash](https://img.shields.io/badge/-Bash-4EAA25?style=flat-square&logo=gnu-bash&logoColor=white)
+
+### ML/DL Frameworks
+![PyTorch](https://img.shields.io/badge/-PyTorch-EE4C2C?style=flat-square&logo=pytorch&logoColor=white)
+![TensorFlow](https://img.shields.io/badge/-TensorFlow-FF6F00?style=flat-square&logo=tensorflow&logoColor=white)
+![XGBoost](https://img.shields.io/badge/-XGBoost-337AB7?style=flat-square&logo=xgboost&logoColor=white)
+![Hugging Face](https://img.shields.io/badge/-Hugging%20Face-FFD21E?style=flat-square&logo=huggingface&logoColor=black)
+
+### LLMs & GenAI
+![LangChain](https://img.shields.io/badge/-LangChain-121212?style=flat-square&logo=chainlink&logoColor=white)
+![OpenAI](https://img.shields.io/badge/-OpenAI-412991?style=flat-square&logo=openai&logoColor=white)
+- LoRA/QLoRA, Quantization, vLLM, RAG, Vector Search (FAISS, Pinecone), Agentic Workflows
+
+### MLOps / LLMOps
+![Kubeflow](https://img.shields.io/badge/-Kubeflow-326CE5?style=flat-square&logo=kubernetes&logoColor=white)
+![MLflow](https://img.shields.io/badge/-MLflow-0194E2?style=flat-square&logo=mlflow&logoColor=white)
+![Docker](https://img.shields.io/badge/-Docker-2496ED?style=flat-square&logo=docker&logoColor=white)
+![Kubernetes](https://img.shields.io/badge/-Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white)
+![Terraform](https://img.shields.io/badge/-Terraform-7B42BC?style=flat-square&logo=terraform&logoColor=white)
+![ArgoCD](https://img.shields.io/badge/-ArgoCD-EF7B4D?style=flat-square&logo=argo&logoColor=white)
+- KServe, TorchServe, FastAPI, SageMaker Pipelines, Vertex AI, CI/CD, GitHub Actions, Jenkins
+
+### Cloud & Data Platforms
+![AWS](https://img.shields.io/badge/-AWS-232F3E?style=flat-square&logo=amazon-aws&logoColor=white)
+![GCP](https://img.shields.io/badge/-GCP-4285F4?style=flat-square&logo=google-cloud&logoColor=white)
+![Azure](https://img.shields.io/badge/-Azure-0078D4?style=flat-square&logo=microsoft-azure&logoColor=white)
+![Apache Spark](https://img.shields.io/badge/-Apache%20Spark-E25A1C?style=flat-square&logo=apache-spark&logoColor=white)
+![Kafka](https://img.shields.io/badge/-Kafka-231F20?style=flat-square&logo=apache-kafka&logoColor=white)
+- SageMaker, S3, Lambda, EKS, Redshift, EMR, Snowflake, BigQuery, Flink
+
+### Databases & Tools
+![PostgreSQL](https://img.shields.io/badge/-PostgreSQL-336791?style=flat-square&logo=postgresql&logoColor=white)
+![MongoDB](https://img.shields.io/badge/-MongoDB-47A248?style=flat-square&logo=mongodb&logoColor=white)
+![Redis](https://img.shields.io/badge/-Redis-DC382D?style=flat-square&logo=redis&logoColor=white)
+![Elasticsearch](https://img.shields.io/badge/-Elasticsearch-005571?style=flat-square&logo=elasticsearch&logoColor=white)
+![Tableau](https://img.shields.io/badge/-Tableau-E97627?style=flat-square&logo=tableau&logoColor=white)
+
+### Monitoring & Governance
+![Prometheus](https://img.shields.io/badge/-Prometheus-E6522C?style=flat-square&logo=prometheus&logoColor=white)
+![Grafana](https://img.shields.io/badge/-Grafana-F46800?style=flat-square&logo=grafana&logoColor=white)
+- SHAP, LIME, Evidently AI, Great Expectations, Drift Detection, Model SLOs
+
+---
+
+## 📊 GitHub Stats
+
+![Your GitHub stats](https://github-readme-stats.vercel.app/api?username=jenvithmanduvaa&show_icons=true&theme=radical)
+
+![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=jenvithmanduvaa&layout=compact&theme=radical)
+
+---
+
+## 🌟 Featured Projects
+
+### [Corrective RAG System](https://github.com/jenvithmanduvaa/Corrective-RAG)
+Advanced RAG system that evaluates and refines retrieved documents before generation, ensuring higher-quality outputs.
+- **Tech Stack:** LangChain, LangGraph, Vector Databases, Python
+- **Key Features:** 
+  - Document evaluation and refinement pipeline
+  - Quality-aware retrieval mechanism
+  - Self-correcting generation process
+  - Enhanced accuracy through iterative refinement
+
+### [Reflection Agent](https://github.com/jenvithmanduvaa/Reflection-Agent)
+Self-improving AI agent built with LangGraph that critiques and revises its own outputs for enhanced reliability.
+- **Tech Stack:** LangGraph, LangChain, OpenAI API, Python
+- **Key Features:**
+  - Self-critique and revision mechanisms
+  - Multi-step reasoning with quality checks
+  - Iterative output improvement
+  - Enhanced content quality and reliability
+
+### [Flight Booking Data Pipeline](https://github.com/jenvithmanduvaa/Flight-Booking-Airflow-CICD)
+End-to-end data engineering pipeline with automated CI/CD for processing flight booking data on GCP.
+- **Tech Stack:** Apache Airflow, Apache Spark, Google Cloud Platform, BigQuery, GitHub Actions, Docker
+- **Key Features:**
+  - Automated data ingestion and orchestration with Airflow
+  - Scalable PySpark transformations on Dataproc Serverless
+  - Multi-environment deployment (DEV/PROD) with GitHub Actions
+  - Real-time insights generation and BigQuery analytics
+  - Environment-aware configuration management
+
+---
+
+## 💼 Professional Experience
+
+**Machine Learning Engineer** @ Piper Sandler (Sep 2024 - Present)
+- Building multi-agent AI systems and optimizing LLM deployments
+- Architecting MLOps infrastructure with Kubeflow, KServe, and ArgoCD
+
+**Machine Learning Engineer** @ Quincy Credit Union (Jan 2024 - Jul 2024)
+- Developed real-time fraud detection system with 99.99% uptime
+- Built CI/CD pipelines reducing deployment time by 90%
+
+**Data Scientist** @ Cyient (Jan 2020 - Jul 2022)
+- Designed streaming ML pipelines processing 500K+ daily transactions
+- Implemented comprehensive model monitoring and explainability frameworks
+
+---
+
+## 🎓 Education
+
+**Master of Science in Data Science**  
+Northeastern University, Boston, MA | May 2024
+
+**Bachelor of Technology**  
+SRM University, India | May 2021
+
+---
+
+## 📫 Let's Connect
+
+[![LinkedIn](https://img.shields.io/badge/-LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/jenvithm)
+[![Email](https://img.shields.io/badge/-Email-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:jenvithm10@gmail.com)
+[![GitHub](https://img.shields.io/badge/-GitHub-181717?style=flat-square&logo=github&logoColor=white)](https://github.com/jenvithmanduvaa)
+
+---
+
+## 💡 Areas of Expertise
+
+- **LLM Engineering:** Fine-tuning, quantization, RAG systems, agentic workflows
+- **MLOps/LLMOps:** CI/CD automation, model versioning, deployment orchestration
+- **Cloud Architecture:** AWS, GCP, Azure - designing cost-efficient, scalable solutions
+- **Real-time ML:** Streaming pipelines, low-latency inference, event-driven architectures
+- **Model Monitoring:** Drift detection, explainability (SHAP/LIME), performance tracking
+- **Data Engineering:** ETL pipelines, feature stores, data governance
+
+---
+
+## 🏆 Key Achievements
+
+✅ Deployed production ML models with **99.99% uptime** and **50K+ predictions/minute**  
+✅ Reduced LLM inference latency by **35%** and memory usage by **40%**  
+✅ Improved fraud detection recall by **15%** with **<100ms latency**  
+✅ Built CI/CD pipelines improving release velocity by **45%** across 10+ models  
+✅ Achieved **100% reproducible experiments** with zero failed releases  
+
+---
+
+## 💼 Open to Opportunities
+
+I'm passionate about building scalable, reliable, and cost-efficient AI solutions. Always interested in collaborating on innovative ML projects or discussing new opportunities in MLOps, LLM engineering, and AI infrastructure.
+
+---
+
+⭐️ From [Jenvith M](https://github.com/jenvithmanduvaa)
